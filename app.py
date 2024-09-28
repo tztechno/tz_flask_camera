@@ -2,9 +2,11 @@ from flask import Flask, render_template, Response, request, redirect, url_for
 import cv2
 import datetime
 import os
+from ultralytics import YOLO  # YOLOv8の読み込み
 
 app = Flask(__name__)
 camera = None
+model = YOLO('yolov8n.pt')  # YOLOv8の最軽量モデルをロード
 
 def start_camera():
     global camera
@@ -23,7 +25,12 @@ def generate_frames():
         if not success:
             break
         else:
-            ret, buffer = cv2.imencode('.jpg', frame)
+            # YOLOv8によるオブジェクト検出
+            results = model(frame)  # 推論結果を取得
+            # 検出結果をフレームに描画
+            annotated_frame = results[0].plot()  # アノテーション付きのフレームを取得
+            
+            ret, buffer = cv2.imencode('.jpg', annotated_frame)  # 描画済みフレームをエンコード
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -48,6 +55,24 @@ def capture():
         return redirect(url_for('index'))  # Redirect back to the camera view
     else:
         return "Failed to capture image"
+
+@app.route('/screenshot', methods=['POST'])
+def screenshot():
+    success, frame = camera.read()
+    if success:
+        # YOLOv8によるオブジェクト検出
+        results = model(frame)
+        annotated_frame = results[0].plot()  # アノテーション付きのフレーム
+
+        # スクリーンショットを保存
+        now = datetime.datetime.now()
+        filename = now.strftime("%Y%m%d_%H%M%S") + "_detection.jpg"
+        if not os.path.exists('screenshots'):
+            os.makedirs('screenshots')
+        cv2.imwrite(os.path.join('screenshots', filename), annotated_frame)
+        return redirect(url_for('index'))  # Redirect back to the camera view
+    else:
+        return "Failed to capture screenshot"
 
 @app.route('/toggle_camera', methods=['POST'])
 def toggle_camera():
