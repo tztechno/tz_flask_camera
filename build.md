@@ -41,7 +41,7 @@ git push -u origin master
 
 ver.05B
 localでは
-元画像captures,yolo結果をscreenshorsに格納
+元画像captures,yolo結果をscreenshotsに格納
 
 ############################################
 ```
