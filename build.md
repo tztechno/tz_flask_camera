@@ -36,6 +36,12 @@ git add .
 git commit -m "2024-09-28"
 git push -u origin master
 
+#####################
+
+
+ver.05B
+localでは
+元画像captures,yolo結果をscreenshorsに格納
 
 
 ```
