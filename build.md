@@ -1,4 +1,5 @@
 ```
+############################################
 
 http://127.0.0.1:5000
 
@@ -27,7 +28,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python3 -m app
 
-##################
+############################################
 
 git init
 git remote add origin https://github.com/tztechno/tz_flask_camera.git
@@ -36,12 +37,11 @@ git add .
 git commit -m "2024-09-28"
 git push -u origin master
 
-#####################
-
+############################################
 
 ver.05B
 localでは
 元画像captures,yolo結果をscreenshorsに格納
 
-
+############################################
 ```
